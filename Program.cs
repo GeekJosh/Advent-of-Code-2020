@@ -25,7 +25,8 @@ namespace Advent_of_Code_2020
             { 6, () => DaySix() },
             { 7, () => DaySeven() },
             { 8, () => DayEight() },
-            { 9, () => DayNine() }
+            { 9, () => DayNine() },
+            { 10, () => DayTen() }
         };
 
         static void Main(string[] args)
@@ -503,6 +504,63 @@ namespace Advent_of_Code_2020
 
             Console.WriteLine("Failed");
 
+        }
+
+        #endregion
+
+        #region Day Ten
+
+        static void DayTen()
+        {
+            var input = File.ReadAllLines(@"10\input.txt").Select(s => int.Parse(s)).ToList();
+            input.Add(0);
+            input.Add(input.Max() + 3);
+            var adaptors = input.OrderBy(i=>i).ToArray();
+
+            var joltDifs = new Dictionary<int, int>();
+
+            for (var x = 1; x < adaptors.Length; x++)
+            {
+                var dif = adaptors[x] - adaptors[x - 1];
+                if (!joltDifs.ContainsKey(dif)) joltDifs.Add(dif, 0);
+                joltDifs[dif]++;
+            }
+
+            Console.WriteLine($"Part 1 answer: {joltDifs[1] * joltDifs[3]}");
+
+            DayTen_2(adaptors);
+        }
+
+        static void DayTen_2(int[] adaptors) {
+            var lookup = new Dictionary<int, long>();
+            var total = CountTotals(0, ref adaptors, ref lookup);
+
+            Console.WriteLine($"Part 2 answer: {total}");
+        }
+
+        static long CountTotals(int start, ref int[] input, ref Dictionary<int, long> lookup) {
+            long total = 0;
+            
+            if (lookup.ContainsKey(start))
+                return lookup[start];
+
+            if (start == input.Length - 1)
+                return 1;
+
+            for(int x = start + 1; x < input.Length; x++) {
+                if (input[x] - input[start] <= 3)
+                    total += CountTotals(x, ref input, ref lookup);
+                else
+                    break;
+            }
+
+            lookup.Add(start, total);
+            return total;
+        }
+
+        static List<int[]> GetPermutations(List<int> adaptors, int start, int target) {
+            var workingSet = adaptors.Skip(adaptors.IndexOf(start)).ToArray();
+            return null;
         }
 
         #endregion
